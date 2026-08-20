@@ -1,0 +1,76 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+        env:
+          VITE_BIRTHDAY_NAME: ${{ vars.VITE_BIRTHDAY_NAME || 'Birthday Person' }}
+          VITE_BIRTHDAY_AGE: ${{ vars.VITE_BIRTHDAY_AGE || '25' }}
+          VITE_BIRTHDAY_GENDER: ${{ vars.VITE_BIRTHDAY_GENDER || 'other' }}
+          VITE_BIRTHDAY_DATE: ${{ vars.VITE_BIRTHDAY_DATE || '2026-04-24T00:00:00' }}
+          VITE_BIRTHDAY_RELATIONSHIP: ${{ vars.VITE_BIRTHDAY_RELATIONSHIP || 'friend' }}
+          VITE_BIRTHDAY_WISHER_NAME: ${{ vars.VITE_BIRTHDAY_WISHER_NAME || 'Alex' }}
+          VITE_BIRTHDAY_CUSTOM_MESSAGE: ${{ vars.VITE_BIRTHDAY_CUSTOM_MESSAGE || 'Have the most amazing birthday ever!' }}
+          VITE_BIRTHDAY_COLOR: ${{ vars.VITE_BIRTHDAY_COLOR || '#FF6B6B' }}
+          VITE_BIRTHDAY_INTERESTS: ${{ vars.VITE_BIRTHDAY_INTERESTS || 'Gaming,Music,Travel' }}
+          VITE_FAVORITE_EMOJIS: ${{ vars.VITE_FAVORITE_EMOJIS || 'party,sparkle,star' }}
+          VITE_SOUND_URL: ${{ vars.VITE_SOUND_URL || 'https://assets.mixkit.co/active_storage/music/2869/2869-preview.mp3' }}
+          VITE_SHOW_PHOTO_SECTION: ${{ vars.VITE_SHOW_PHOTO_SECTION || 'true' }}
+          VITE_SHOW_QUIZ_SECTION: ${{ vars.VITE_SHOW_QUIZ_SECTION || 'true' }}
+          VITE_SHOW_GIFT_SECTION: ${{ vars.VITE_SHOW_GIFT_SECTION || 'true' }}
+          VITE_SHOW_HEART_TREE_SECTION: ${{ vars.VITE_SHOW_HEART_TREE_SECTION || 'true' }}
+          VITE_SHOW_VIDEO_SECTION: ${{ vars.VITE_SHOW_VIDEO_SECTION || 'true' }}
+          VITE_SHOW_CAKE_SECTION: ${{ vars.VITE_SHOW_CAKE_SECTION || 'true' }}
+          VITE_SHOW_FINAL_SURPRISE: ${{ vars.VITE_SHOW_FINAL_SURPRISE || 'true' }}
+          VITE_ANIMATION_SPEED: ${{ vars.VITE_ANIMATION_SPEED || 'moderate' }}
+          VITE_ANIMATION_INTENSITY: ${{ vars.VITE_ANIMATION_INTENSITY || 'high' }}
+          VITE_PARTICLE_COUNT: ${{ vars.VITE_PARTICLE_COUNT || '25' }}
+          VITE_PASSWORD_REQUIRED: ${{ vars.VITE_PASSWORD_REQUIRED || 'false' }}
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

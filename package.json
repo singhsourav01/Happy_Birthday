@@ -4,13 +4,13 @@
   "version": "3.1.0",
   "type": "module",
   "author": "SouravSingh",
-  "homepage": "https://github.com/singhsourav01/mummy-birthday#readme",
+  "homepage": "https://singhsourav01.github.io/Happy_Birthday/",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/singhsourav01/mummy-birthday.git"
+    "url": "git+https://github.com/singhsourav01/Happy_Birthday.git"
   },
   "bugs": {
-    "url": "https://github.com/singhsourav01/mummy-birthday/issues"
+    "url": "https://github.com/singhsourav01/Happy_Birthday/issues"
   },
   "scripts": {
     "dev": "vite",
